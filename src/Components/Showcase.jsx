@@ -13,7 +13,7 @@ const Showcase = () => {
     <div className="bg-[#f7f4f2] py-12 px-4 sm:px-6 md:px-16">
       {/* Heading */}
       <h2 className="text-5xl md:text-6xl font-light text-center mb-12 tracking-widest text-[#2E2E2E]">
-        MYRDDIN
+        BRAHMANI'S TRENDING COLLECTION
       </h2>
 
       {/* Image Grid */}

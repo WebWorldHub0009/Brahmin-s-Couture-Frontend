@@ -16,7 +16,7 @@ const OurSareeCollection = () => {
       {/* Heading Section */}
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold tracking-wide">Our Saree Collection</h2>
-        <p className="text-gray-600 mt-3 max-w-xl mx-auto">
+        <p className="text-gray-600 mt-3 font-light tracking-wider max-w-xl mx-auto">
           Discover our premium and trending sarees, handpicked to elevate your ethnic style.
         </p>
       </div>

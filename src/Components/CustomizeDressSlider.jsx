@@ -98,7 +98,7 @@ const CustomizeDressSlider = ({ slides }) => {
       {/* Overlay Text */}
       <div className="absolute inset-0 flex items-center bg-black/40 px-6 md:px-16 z-10">
         <div className="text-white max-w-2xl">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5 drop-shadow-xl tracking-wide">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-light  leading-tight mb-5 drop-shadow-xl tracking-wider">
             {slides[currentImage].title}
           </h2>
           <p className="text-base sm:text-lg md:text-2xl font-light drop-shadow-lg font-sans">

@@ -20,7 +20,7 @@ const Showcase = () => {
       <div className="flex flex-wrap md:flex-nowrap justify-center md:justify-start items-end gap-2 sm:gap-3 md:gap-1 overflow-hidden">
         {images.map((image, idx) => {
           const isEven = idx % 2 === 0;
-          const verticalShift = isEven ? "md:-translate-y-12" : "md:translate-y-12";
+          const verticalShift = isEven ? "md:-translate-y-6" : "md:translate-y-6";
           const slideDirection = isEven
             ? "group-hover:translate-y-0 -translate-y-full"
             : "group-hover:translate-y-0 translate-y-full";

@@ -12,9 +12,9 @@ const Home = () => {
    <CustomizeDressSlider/>
    <TrendingWearSlider/>
    <SareeCollection/>
-   <SareeCollection2/>
-   <JewellerySection/>
    <Showcase/>
+   <SareeCollection2/>
+   {/* <JewellerySection/> */}
    </>
   )
 }

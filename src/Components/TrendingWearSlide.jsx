@@ -57,7 +57,28 @@ const TrendingWearSlider = () => {
   };
 
   return (
-    <div className="w-full py-12 overflow-hidden flex items-center justify-center">
+    <div className="w-full py-12 overflow-hidden flex flex-col items-center justify-center">
+      {/* Heading Section */}
+      <div className="text-center px-4 mb-10">
+        <motion.h2
+          className="text-3xl sm:text-4xl md:text-5xl font-light tracking-wider text-gray-900 "
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+           Trending Wear Collection
+        </motion.h2>
+        <motion.p
+          className="mt-2 text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          Step into style with our latest fashion favorites — handpicked to turn heads and elevate your everyday look.
+        </motion.p>
+      </div>
+
+      {/* Slider Section */}
       <div className="relative w-full max-w-[95%] md:max-w-[80%] h-[500px] flex justify-center items-center">
         <AnimatePresence initial={false}>
           {cards.slice(0, VISIBLE_CARDS).map((item, idx) => {

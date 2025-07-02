@@ -124,7 +124,7 @@ const Navbar = () => {
   alt="Logo"
   className={`transition-all duration-300 object-contain max-h-[60px] w-auto`}
   style={{ height: scrolled ? "48px" : "60px" }}
-/> */} <h2 className="text-xl font-bold">Brahmin's <span className="text-red-600">Couture</span></h2>
+/> */} <h2 className="text-xl font-bold">Brahmani <span className="text-red-600">Couture</span></h2>
 
 
         {/* Right Icons */}

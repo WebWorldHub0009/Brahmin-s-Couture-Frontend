@@ -8,14 +8,16 @@ import img6 from "../assets/images/saree-home/s9.jpg";
 import img7 from "../assets/images/saree-home/s100.jpg";
 import img8 from "../assets/images/saree-home/s111.jpg";
 import img9 from "../assets/images/saree-home/s122.jpg";
-import img10 from "../assets/images/saree-home/blue.webp" 
+import img10 from "../assets/images/saree-home/blue.webp";
 
 const OurSareeCollection = () => {
   return (
     <div className="px-4 md:px-8 py-12 max-w-[1600px] mx-auto">
       {/* Heading Section */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-light tracking-wider">Our Saree Collection</h2>
+        <h2 className="text-3xl md:text-4xl font-light tracking-wider">
+          Our Saree Collection
+        </h2>
         <p className="text-gray-600 mt-3 font-light tracking-wider max-w-xl mx-auto">
           Discover our premium and trending sarees, handpicked to elevate your ethnic style.
         </p>
@@ -29,7 +31,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">Up to 50%</h3>
             <p className="text-sm mb-3 text-center">Elegant Traditional Sarees</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               Shop Now
             </button>
           </div>
@@ -40,7 +42,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">New Arrival</h3>
             <p className="text-sm mb-3">Luxe Cotton Sarees</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               Explore
             </button>
           </div>
@@ -52,7 +54,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">Silk Blend</h3>
             <p className="text-sm mb-3">Timeless Fashion</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               View
             </button>
           </div>
@@ -63,7 +65,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">Cotton Comfort</h3>
             <p className="text-sm mb-3">Everyday Ethnic Wear</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               Browse
             </button>
           </div>
@@ -75,7 +77,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">Silk Blend</h3>
             <p className="text-sm mb-3">Timeless Fashion</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               View
             </button>
           </div>
@@ -86,7 +88,7 @@ const OurSareeCollection = () => {
           <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-white p-4 rounded-xl">
             <h3 className="text-xl font-semibold mb-2">Cotton Comfort</h3>
             <p className="text-sm mb-3">Everyday Ethnic Wear</p>
-            <button className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+            <button className="hidden md:block bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition">
               Browse
             </button>
           </div>

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaBars,
   FaSearch,
-  FaUser,
-  FaHeart,
-  FaTh,
-  FaSyncAlt,
+  FaSignOutAlt,
   FaTimes,
+  FaSignInAlt,
+  FaUserPlus,
 } from "react-icons/fa";
 import {
   FaFacebookF,
@@ -24,6 +23,8 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const tabs = [
     "Home",
@@ -45,17 +46,38 @@ const Navbar = () => {
     Contact: "/contact",
   };
 
+  // Watch login/logout events
   useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    checkAuth(); // check initially
+    window.addEventListener("authChange", checkAuth);
+
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("authChange", checkAuth);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    window.dispatchEvent(new Event("authChange")); // inform other components
+    navigate("/");
+  };
+
   return (
-    <div className="w-full font-sans">
-      {/* Top Alert */}
+    <div className="w-full font-sans overflow-x-hidden">
+      {/* Top Bar */}
       {!scrolled && (
-        <div className="bg-red-900 text-white text-center text-sm py-2 px-2 transition-all duration-500 z-50 w-full">
+        <div className="bg-red-900 text-white text-center text-sm py-2 px-2 z-50 w-full">
           <div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-6">
             <span className="hidden md:inline">UDYAM-TS-02-0118192</span>
             <span>Contact: +918179941102</span>
@@ -85,15 +107,38 @@ const Navbar = () => {
           Brahmani <span className="text-red-600">Couture</span>
         </h2>
 
-        {/* Right Icons */}
-        <div className="flex gap-3 items-center text-xl text-[#2E2E2E] relative">
-          {[FaUser, FaTh, FaHeart, FaSyncAlt, FaSearch].map((Icon, i) => (
-            <button key={i} className="hover:opacity-70 transition"><Icon /></button>
-          ))}
-          <button className="relative hover:opacity-80 transition">
+        {/* Right Actions */}
+        <div className="flex items-center gap-4 text-xl text-[#2E2E2E]">
+          <button className="hover:opacity-70 transition"><FaSearch /></button>
+
+          <Link to="/cart" className="relative hover:opacity-80 transition">
             <FiShoppingBag />
             <span className="absolute -top-2 -right-2 bg-[#B02E0C] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">1</span>
-          </button>
+          </Link>
+
+          {!isLoggedIn ? (
+            <>
+              <Link
+                to="/login"
+                className="flex items-center gap-1 text-sm bg-[#2E2E2E] text-white px-3 py-1.5 rounded hover:bg-[#444]"
+              >
+                <FaSignInAlt /> Login
+              </Link>
+              <Link
+                to="/register"
+                className="flex items-center gap-1 text-sm bg-[#C19A6B] text-white px-3 py-1.5 rounded hover:bg-[#b28858]"
+              >
+                <FaUserPlus /> Signup
+              </Link>
+            </>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-sm bg-red-600 text-white px-3 py-1.5 rounded hover:bg-red-700"
+            >
+              <FaSignOutAlt /> Logout
+            </button>
+          )}
         </div>
       </div>
 
@@ -103,28 +148,24 @@ const Navbar = () => {
           scrolled ? "fixed top-0 py-2 shadow-md" : "relative py-4"
         } flex md:hidden items-center justify-between px-4`}
       >
-        {/* Left */}
         <div className="flex items-center gap-4 text-xl text-[#2E2E2E]">
           <button onClick={() => setMenuOpen(true)}><FaBars /></button>
           <button><FaSearch /></button>
         </div>
 
-        {/* Logo */}
         <div className="text-[#2E2E2E] flex items-center justify-center">
           <img src={logo} alt="Logo" className={`${scrolled ? "h-10" : "h-12"} transition-all duration-300 object-contain`} />
         </div>
 
-        {/* Right */}
         <div className="flex items-center gap-4 text-xl text-[#2E2E2E]">
-          <button><FaUser /></button>
-          <button className="relative hover:opacity-80 transition">
+          <Link to="/cart" className="relative hover:opacity-80 transition">
             <FiShoppingBag />
             <span className="absolute -top-2 -right-2 bg-[#B02E0C] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">1</span>
-          </button>
+          </Link>
         </div>
       </div>
 
-      {/* Desktop Bottom Tabs */}
+      {/* Bottom Tabs */}
       <div
         className={`bg-[#1E1E1E] text-white z-[998] w-full transition-all duration-500 ${
           scrolled ? "fixed top-[45px]" : ""
@@ -157,6 +198,7 @@ const Navbar = () => {
           <h2 className="text-lg font-bold">Menu</h2>
           <button onClick={() => setMenuOpen(false)} className="text-white text-xl"><FaTimes /></button>
         </div>
+
         <div className="flex flex-col gap-4 px-4 py-6">
           {tabs.map((tab, idx) => (
             <Link
@@ -173,6 +215,38 @@ const Navbar = () => {
               {tab}
             </Link>
           ))}
+
+          {/* Mobile Auth Buttons */}
+          <div className="mt-4 border-t border-gray-500 pt-4 flex flex-col gap-2">
+            {!isLoggedIn ? (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 text-sm bg-[#2E2E2E] text-white px-3 py-2 rounded hover:bg-[#444]"
+                >
+                  <FaSignInAlt /> Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 text-sm bg-[#C19A6B] text-white px-3 py-2 rounded hover:bg-[#b28858]"
+                >
+                  <FaUserPlus /> Signup
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="flex items-center gap-2 text-sm bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"
+              >
+                <FaSignOutAlt /> Logout
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

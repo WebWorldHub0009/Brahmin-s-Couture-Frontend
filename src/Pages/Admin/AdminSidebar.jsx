@@ -60,7 +60,7 @@ const AdminSidebar = () => {
 
       {/* Sidebar Panel */}
       <div
-        className={`fixed top-0 left-0 z-50 w-72 h-screen bg-white shadow-xl border-r transform transition-transform duration-300 ease-in-out sidebar-panel
+        className={`fixed top-0 left-0 z-50 w-72 h-full bg-white shadow-xl border-r transform transition-transform duration-300 ease-in-out sidebar-panel
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:w-64`}
       >
         {/* Sticky Wrapper */}

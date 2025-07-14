@@ -10,6 +10,7 @@ import PattuSaree from "./Pages/PattuSaree";
 import Acessosaries from "./Pages/Acessosaries";
 import FamilyCombo from "./Pages/FamilyCombo";
 import AllProducts from "./Pages/AllProducts";
+import SingleProduct from "./Pages/SingleProduct"; // ✅ New Import
 
 /* ---------- Auth Pages ---------- */
 import Login from "./Pages/User/Login";
@@ -59,6 +60,9 @@ function App() {
         {/* Auth Pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* ✅ Single Product Page */}
+        <Route path="/product/:id" element={<SingleProduct />} />
       </Route>
 
       {/* Admin routes */}
@@ -66,7 +70,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={<ProductList />} />
         <Route path="products/add" element={<ProductForm />} />
-        <Route path="products/edit/:id" element={<ProductForm />} /> {/* ✅ NEW UPDATE */}
+        <Route path="products/edit/:id" element={<ProductForm />} />
       </Route>
     </Routes>
   );

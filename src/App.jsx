@@ -10,7 +10,9 @@ import PattuSaree from "./Pages/PattuSaree";
 import Acessosaries from "./Pages/Acessosaries";
 import FamilyCombo from "./Pages/FamilyCombo";
 import AllProducts from "./Pages/AllProducts";
-import SingleProduct from "./Pages/SingleProduct"; // ✅ New Import
+import SingleProduct from "./Pages/SingleProduct";
+import CartPage from "./Pages/CartPage";
+
 
 /* ---------- Auth Pages ---------- */
 import Login from "./Pages/User/Login";
@@ -22,6 +24,8 @@ import Pant from "./Pages/Pant"; // demo admin page
 import Dashboard from "./Pages/Admin/Dashboard";
 import ProductList from "./Pages/Admin/ProductList";
 import ProductForm from "./Pages/Admin/ProductForm"; // used for both Add & Edit
+import ShopNowProduct from "./Pages/CheckoutPage";
+import CheckoutPage from "./Pages/CheckoutPage";
 
 /* ---------- Public layout ---------- */
 const PublicLayout = () => (
@@ -61,8 +65,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* ✅ Single Product Page */}
+        {/* Product & Cart */}
         <Route path="/product/:id" element={<SingleProduct />} />
+        <Route path="/cart" element={<CartPage />} />
+
+        {/* ✅ Shop Now Page */}
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Route>
 
       {/* Admin routes */}

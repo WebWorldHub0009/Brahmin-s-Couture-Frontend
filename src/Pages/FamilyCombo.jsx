@@ -11,8 +11,7 @@ const CustomisedCombo = () => {
     try {
       const { data } = await api.get("/products/getAll");
       const filtered = data?.products?.filter(
-        (item) =>
-          item.category?.toLowerCase() === "customised combo"
+        (item) => item.category?.toLowerCase() === "customised combo"
       );
       setProducts(filtered || []);
     } catch (err) {
@@ -46,12 +45,23 @@ const CustomisedCombo = () => {
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300 relative"
+              className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group relative"
             >
+              {/* Stock Badge (top-left) */}
+              <div
+                className={`absolute top-3 left-3 px-3 py-1 text-xs font-medium rounded-full z-10 ${
+                  product.stock > 0
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {product.stock > 0 ? "In Stock" : "Out of Stock"}
+              </div>
+
               {/* Add to Cart Icon */}
               <button
                 title="Add to Cart"
-                className="absolute top-2 right-2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition z-10"
               >
                 <FaShoppingCart className="text-gray-700" />
               </button>
@@ -61,49 +71,40 @@ const CustomisedCombo = () => {
                 <img
                   src={product.images[0]?.url}
                   alt={product.name}
-                  className="w-full h-60 object-cover"
+                  className="w-full h-64 object-cover group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </Link>
 
-              <div className="p-4 flex flex-col justify-between h-[200px]">
+              {/* Content */}
+              <div className="p-5 flex flex-col h-[180px] justify-between">
                 <div>
-                  {/* Product Name */}
+                  {/* Title */}
                   <Link to={`/product/${product._id}`}>
-                    <h3 className="text-lg font-medium text-gray-800 mb-1 truncate hover:underline">
+                    <h3 className="text-lg font-semibold text-gray-800 truncate hover:text-[#B02E0C] transition">
                       {product.name}
                     </h3>
                   </Link>
 
-                  {/* Truncated Description */}
-                  <p className="text-sm text-gray-500 mb-2">
-                    {product.description?.slice(0, 20)}...
+                  {/* Description */}
+                  <p className="text-sm text-gray-500 mt-1">
+                    {product.description?.slice(0, 45)}...
                   </p>
-
-                  {/* Price & Stock */}
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-[#B02E0C] font-bold flex items-center gap-1">
-                      <FaRupeeSign size={14} />
-                      {product.price}
-                    </span>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        product.stock > 0
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-300 text-gray-600"
-                      }`}
-                    >
-                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                    </span>
-                  </div>
                 </div>
 
-                {/* Shop Now Button */}
-                <Link
-                  to={`/product/${product._id}`}
-                  className="mt-4 w-full inline-block text-center bg-[#B02E0C] hover:bg-[#961b00] text-white text-sm py-2 rounded-full transition"
-                >
-                  Shop Now
-                </Link>
+                {/* Price + CTA */}
+                <div className="">
+                  <div className="flex items-center gap-1 text-[#B02E0C] font-bold text-[17px]">
+                    <FaRupeeSign size={14} />
+                    {product.price}
+                  </div>
+
+                  <Link
+                    to={`/product/${product._id}`}
+                    className="mt-2 w-full inline-block text-center bg-[#B02E0C] hover:bg-[#8f2006] text-white font-medium text-sm py-2 rounded-md transition"
+                  >
+                    Shop Now
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

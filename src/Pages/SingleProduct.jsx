@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/axiosConfig";
 import {
   FaRupeeSign,
@@ -10,10 +10,13 @@ import {
 
 const SingleProduct = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -30,14 +33,6 @@ const SingleProduct = () => {
     fetchProduct();
   }, [id]);
 
-  if (!product) {
-    return (
-      <p className="text-center text-gray-500 text-lg mt-20">
-        Loading product details...
-      </p>
-    );
-  }
-
   const increaseQty = () => {
     if (quantity < product.stock) setQuantity((q) => q + 1);
   };
@@ -46,12 +41,77 @@ const SingleProduct = () => {
     if (quantity > 1) setQuantity((q) => q - 1);
   };
 
+  const handleAddToCart = async () => {
+    try {
+      if (product.sizes.length > 0 && !selectedSize) {
+        return setMessage("Please select a size.");
+      }
+
+      const token = localStorage.getItem("token");
+      if (!token) return setMessage("You must be logged in.");
+
+      const res = await api.post(
+        "/cart/add",
+        {
+          productId: product._id,
+          quantity,
+          size: selectedSize,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        setMessage("✅ Added to cart successfully!");
+      } else {
+        setMessage(res.data.message || "Something went wrong.");
+      }
+    } catch (error) {
+      console.error("❌ Add to cart error:", error);
+      setMessage(error.response?.data?.message || "Server error.");
+    }
+  };
+
+  const handleShopNow = () => {
+    if (product.sizes.length > 0 && !selectedSize) {
+      return setMessage("Please select a size.");
+    }
+
+    const directPurchaseData = {
+      product: {
+        ...product,
+        images: product.images.slice(0, 1),
+      },
+      selectedSize,
+      quantity,
+    };
+
+    navigate("/checkout", {
+      state: {
+        directPurchase: true,
+        ...directPurchaseData,
+      },
+    });
+  };
+
+  if (!product) {
+    return (
+      <p className="text-center text-gray-500 text-lg mt-20">
+        Loading product details...
+      </p>
+    );
+  }
+
+  const totalPrice = product.price * quantity;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Left Image Section - Sticky */}
+      {/* Image Section */}
       <div className="md:sticky md:top-30 self-start">
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Thumbnails */}
           <div className="flex md:flex-col gap-2 max-h-[500px] overflow-auto">
             {product.images.map((img, i) => (
               <img
@@ -65,8 +125,6 @@ const SingleProduct = () => {
               />
             ))}
           </div>
-
-          {/* Main Image */}
           <div className="w-full">
             <img
               src={selectedImage}
@@ -77,17 +135,14 @@ const SingleProduct = () => {
         </div>
       </div>
 
-      {/* Right Info Section - Scrollable if long */}
+      {/* Product Info */}
       <div className="flex flex-col gap-6 overflow-auto max-h-[580px] pr-1">
-        <h2 className="text-3xl font-semibold text-gray-800">
-          {product.name}
-        </h2>
+        <h2 className="text-3xl font-semibold text-gray-800">{product.name}</h2>
 
-        {/* Price & Stock */}
         <div className="flex items-center gap-4">
           <p className="text-xl font-bold text-[#B02E0C] flex items-center gap-1">
             <FaRupeeSign size={16} />
-            {product.price}
+            {totalPrice}
           </p>
           {product.stock > 0 ? (
             <span className="text-sm text-green-600 flex items-center gap-1">
@@ -100,7 +155,6 @@ const SingleProduct = () => {
           )}
         </div>
 
-        {/* Size Selection */}
         {product.sizes.length > 0 && (
           <div>
             <p className="text-sm font-medium mb-1">Select Size:</p>
@@ -122,7 +176,7 @@ const SingleProduct = () => {
           </div>
         )}
 
-        {/* Quantity Counter */}
+        {/* Quantity */}
         <div>
           <p className="text-sm font-medium mb-1">Quantity:</p>
           <div className="flex items-center w-fit border rounded-md overflow-hidden">
@@ -144,15 +198,31 @@ const SingleProduct = () => {
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-2">
-          <button className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition">
+          <button
+            onClick={handleAddToCart}
+            className="flex-1 flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition"
+          >
             <FaShoppingCart /> Add to Cart
           </button>
-          <button className="flex-1 bg-[#B02E0C] hover:bg-[#961b00] text-white px-6 py-3 rounded-full transition">
+
+          <button
+            onClick={handleShopNow}
+            className="flex-1 bg-[#B02E0C] hover:bg-[#961b00] text-white px-6 py-3 rounded-full transition"
+          >
             Shop Now
           </button>
         </div>
 
-        {/* Description */}
+        {message && (
+          <p
+            className={`text-sm mt-2 ${
+              message.startsWith("✅") ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+
         <div>
           <h4 className="text-lg font-semibold mt-4 mb-2">Description</h4>
           <p className="text-sm text-gray-600 leading-relaxed">

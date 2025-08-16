@@ -32,8 +32,7 @@ const Navbar = () => {
     "Handloom Sarees",
     "Pattu Sarees",
     "Customised Family Combo’s",
-    "Accessories",
-    "Contact",
+    "Accessories"
   ];
 
   const routeMap = {
@@ -43,7 +42,6 @@ const Navbar = () => {
     "Pattu Sarees": "/pattu-saree",
     "Customised Family Combo’s": "/family-combo",
     Accessories: "/accessaries",
-    Contact: "/contact",
   };
 
   // Watch login/logout events

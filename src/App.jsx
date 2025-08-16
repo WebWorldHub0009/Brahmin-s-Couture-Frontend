@@ -36,6 +36,7 @@ import TermsAndConditions from "./Pages/Others/TermsAndConditions";
 import CancellationRefund from "./Pages/Others/CancellationRefund";
 import ShippingDelivery from "./Pages/Others/ShippingDelivery";
 import PrivacyPolicy from "./Pages/Others/PrivacyPolicy";
+import ContactUs from "./Pages/Others/ContactUs";
 
 /* ---------- Layouts ---------- */
 const PublicLayout = () => (
@@ -84,6 +85,7 @@ function App() {
         <Route path="/refund" element={<CancellationRefund />} />  
         <Route path="/shipping" element={<ShippingDelivery />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/contact" element={<ContactUs />} />
 
         {/* Auth Pages */}
         <Route path="/login" element={<Login />} />

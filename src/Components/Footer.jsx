@@ -78,6 +78,7 @@ export default function Footer() {
               ["Privacy Policy", "/privacy"],
               ["Shipping Delivery", "/shipping"],
               ["Privacy Policy", "/privacy"],
+              ["Contact us", "/contact"],
             ].map(([text, link], i) => (
               <li key={i}>
                 <Link to={link} className="hover:text-pink-500 transition duration-300">

@@ -37,6 +37,7 @@ import CancellationRefund from "./Pages/Others/CancellationRefund";
 import ShippingDelivery from "./Pages/Others/ShippingDelivery";
 import PrivacyPolicy from "./Pages/Others/PrivacyPolicy";
 import ContactUs from "./Pages/Others/ContactUs";
+import ScrollToTop from "./Components/ScrollToTop";
 
 /* ---------- Layouts ---------- */
 const PublicLayout = () => (
@@ -44,6 +45,7 @@ const PublicLayout = () => (
     <Navbar className="fixed top-0 w-full z-50" />
     <Outlet />
     <Footer />
+    <ScrollToTop/>
   </>
 );
 
@@ -109,6 +111,7 @@ function App() {
         <Route path="address" element={<AddressBook />} />
       </Route>
     </Routes>
+   
   );
 }
 

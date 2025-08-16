@@ -27,7 +27,7 @@ const Login = () => {
         if (data.user.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
-          navigate('/');
+          navigate('/user/dashboard');
         }
       } else {
         setMessage(data.message || 'Login failed');

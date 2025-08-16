@@ -1,10 +1,10 @@
 import React from "react";
-import img1 from "../assets/images/smallslider/s1.jpg";
-import img2 from "../assets/images/smallslider/s2.jpg";
-import img3 from "../assets/images/smallslider/s3.jpg";
-import img4 from "../assets/images/smallslider/s4.jpg";
-import img5 from "../assets/images/smallslider/s5.jpg";
-import img6 from "../assets/images/smallslider/s2.jpg"; // reuse
+import img1 from "../assets/images/st1.jpg";
+import img2 from "../assets/images/st2.jpg";
+import img3 from "../assets/images/st3.jpg";
+import img4 from "../assets/images/st4.jpg";
+import img5 from "../assets/images/st5.jpg";
+import img6 from "../assets/images/st7.jpg"; // reuse
 
 const images = [img1, img2, img3, img4, img5, img6];
 

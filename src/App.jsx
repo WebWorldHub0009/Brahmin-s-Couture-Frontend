@@ -32,6 +32,10 @@ import Profile from "./Components/UserDashboard/Profile";
 import Orders from "./Components/UserDashboard/Orders";
 import AddressBook from "./Components/UserDashboard/AddressBook";
 import AdminOrders from "./Pages/Admin/AdminOrders";
+import TermsAndConditions from "./Pages/Others/TermsAndConditions";
+import CancellationRefund from "./Pages/Others/CancellationRefund";
+import ShippingDelivery from "./Pages/Others/ShippingDelivery";
+import PrivacyPolicy from "./Pages/Others/PrivacyPolicy";
 
 /* ---------- Layouts ---------- */
 const PublicLayout = () => (
@@ -76,6 +80,10 @@ function App() {
         <Route path="/product/:id" element={<SingleProduct />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/tnc" element={<TermsAndConditions />} />
+        <Route path="/refund" element={<CancellationRefund />} />  
+        <Route path="/shipping" element={<ShippingDelivery />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
 
         {/* Auth Pages */}
         <Route path="/login" element={<Login />} />

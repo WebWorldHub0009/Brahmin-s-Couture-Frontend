@@ -73,7 +73,10 @@ export default function Footer() {
               ["Pattu Sarees", "/pattu-saree"],
               ["Contact Us", "/contact"],
               ["About", "/about"],
-              ["Terms and Conditions", "/terms"],
+              ["Terms and Conditions", "/tnc"],
+              ["Cancellation and Refund", "/refund"],
+              ["Privacy Policy", "/privacy"],
+              ["Shipping Delivery", "/shipping"],
               ["Privacy Policy", "/privacy"],
             ].map(([text, link], i) => (
               <li key={i}>

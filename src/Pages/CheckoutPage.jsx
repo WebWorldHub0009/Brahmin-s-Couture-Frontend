@@ -93,10 +93,10 @@ const CheckoutPage = () => {
     setBilling(addresses[index]);
   };
 
-  const total = cart.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0
-  );
+  const total = cart
+  .filter(item => item?.product && typeof item.product.price === "number")
+  .reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+
 
   const handleInput = (e) => {
     setBilling((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -269,27 +269,25 @@ const CheckoutPage = () => {
           </h2>
 
           <div className="space-y-5">
-            {cart.map((item, i) => (
-              <div
-                key={i}
-                className="flex justify-between gap-4 items-start border-b pb-4"
-              >
-                <div>
-                  <p className="font-medium text-gray-800">
-                    {item.product.name}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Qty: {item.quantity} × ₹{item.product.price}
-                  </p>
-                  {item.size && (
-                    <p className="text-xs text-gray-400">Size: {item.size}</p>
-                  )}
-                </div>
-                <p className="font-semibold text-gray-800 whitespace-nowrap">
-                  ₹{item.product.price * item.quantity}
-                </p>
-              </div>
-            ))}
+            {cart
+  .filter(item => item?.product && typeof item.product.price === "number")
+  .map((item, i) => (
+    <div key={i} className="flex justify-between gap-4 items-start border-b pb-4">
+      <div>
+        <p className="font-medium text-gray-800">{item.product.name}</p>
+        <p className="text-sm text-gray-600">
+          Qty: {item.quantity} × ₹{item.product.price}
+        </p>
+        {item.size && (
+          <p className="text-xs text-gray-400">Size: {item.size}</p>
+        )}
+      </div>
+      <p className="font-semibold text-gray-800 whitespace-nowrap">
+        ₹{item.product.price * item.quantity}
+      </p>
+    </div>
+))}
+
           </div>
 
           <div className="border-t pt-4 mt-6 text-right">

@@ -13,7 +13,7 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // ✅ Added
+  const navigate = useNavigate();
 
   const fetchCart = async () => {
     try {
@@ -23,7 +23,20 @@ const CartPage = () => {
       });
 
       if (res.data.success) {
-        setCartItems(Array.isArray(res.data.cart?.items) ? res.data.cart.items : []);
+        const items = Array.isArray(res.data.cart?.items)
+          ? res.data.cart.items
+          : [];
+
+        // ✅ Only include valid items
+        const validItems = items.filter(
+          (item) =>
+            item &&
+            item.product &&
+            typeof item.product === "object" &&
+            item.product._id
+        );
+
+        setCartItems(validItems);
       } else {
         setMessage("Failed to fetch cart.");
       }
@@ -46,9 +59,13 @@ const CartPage = () => {
     try {
       const token = localStorage.getItem("token");
 
+      // ✅ Optimistically update UI
       setCartItems((prev) =>
         prev.map((ci) =>
-          ci.product._id === item.product._id
+          ci?.product &&
+          item?.product &&
+          ci.product._id === item.product._id &&
+          ci.size === item.size
             ? { ...ci, quantity: newQty }
             : ci
         )
@@ -73,15 +90,20 @@ const CartPage = () => {
   const handleRemove = async (productId, size) => {
     try {
       const token = localStorage.getItem("token");
+
       await api.delete(`/cart/remove`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { productId, size },
       });
 
+      // ✅ Remove from state safely
       setCartItems((prev) =>
         prev.filter(
           (item) =>
-            item.product._id !== productId || (item.size || "") !== (size || "")
+            item &&
+            item.product &&
+            item.product._id !== productId &&
+            (item.size || "") !== (size || "")
         )
       );
     } catch (err) {
@@ -89,14 +111,12 @@ const CartPage = () => {
     }
   };
 
-  const totalAmount = cartItems.reduce(
-    (acc, item) =>
-      acc + (item.product?.price || 0) * (item.quantity || 1),
-    0
-  );
+  const totalAmount = cartItems
+    .filter((item) => item?.product && item.product?.price)
+    .reduce((acc, item) => acc + item.product.price * item.quantity, 0);
 
   const goToCheckout = () => {
-    navigate("/checkout"); // ✅ Navigate with no state => from cart
+    navigate("/checkout");
   };
 
   if (loading) {
@@ -127,70 +147,83 @@ const CartPage = () => {
       {message && <p className="text-red-600 mb-4">{message}</p>}
 
       <div className="space-y-6">
-        {cartItems.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col md:flex-row items-center justify-between border-b pb-4 gap-4"
-          >
-            <div className="flex items-center gap-4 w-full md:w-2/3">
-              <img
-                src={item.product?.images?.[0]?.url || "/placeholder.jpg"}
-                alt={item.product?.name || "Product"}
-                className="w-20 h-20 object-cover rounded border"
-              />
-              <div>
-                <h3 className="font-semibold text-gray-800">
-                  {item.product?.name || "Unknown Product"}
-                </h3>
-                {item.size && (
-                  <p className="text-sm text-gray-500">Size: {item.size}</p>
-                )}
-                <p className="text-sm text-gray-600 flex items-center gap-1">
-                  <FaRupeeSign /> {(item.product?.price || 0) * item.quantity}
-                </p>
-                <p className="text-xs text-gray-400">
-                  Price per item: ₹{item.product?.price}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <div className="flex items-center border rounded overflow-hidden shadow-sm">
-                <button
-                  onClick={() =>
-                    item.quantity > 1 &&
-                    handleQuantityChange(item, item.quantity - 1)
-                  }
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-lg text-gray-700 disabled:opacity-50"
-                  disabled={item.quantity <= 1}
-                >
-                  <FaMinus />
-                </button>
-                <span className="px-4 py-2 text-lg font-medium bg-white">
-                  {item.quantity}
-                </span>
-                <button
-                  onClick={() =>
-                    item.quantity < item.product?.stock &&
-                    handleQuantityChange(item, item.quantity + 1)
-                  }
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-lg text-gray-700 disabled:opacity-50"
-                  disabled={item.quantity >= item.product?.stock}
-                >
-                  <FaPlus />
-                </button>
+        {cartItems
+          .filter(
+            (item) =>
+              item &&
+              item.product &&
+              typeof item.product === "object" &&
+              item.product._id
+          )
+          .map((item, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col md:flex-row items-center justify-between border-b pb-4 gap-4"
+            >
+              <div className="flex items-center gap-4 w-full md:w-2/3">
+                <img
+                  src={item.product?.images?.[0]?.url || "/placeholder.jpg"}
+                  alt={item.product?.name || "Product"}
+                  className="w-20 h-20 object-cover rounded border"
+                />
+                <div>
+                  <h3 className="font-semibold text-gray-800">
+                    {item.product?.name || "Unknown Product"}
+                  </h3>
+                  {item.size && (
+                    <p className="text-sm text-gray-500">Size: {item.size}</p>
+                  )}
+                  <p className="text-sm text-gray-600 flex items-center gap-1">
+                    <FaRupeeSign />{" "}
+                    {(item.product?.price || 0) * item.quantity}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Price per item: ₹{item.product?.price || 0}
+                  </p>
+                </div>
               </div>
 
-              <button
-                onClick={() => handleRemove(item.product._id, item.size)}
-                className="text-red-600 hover:text-red-800"
-                title="Remove"
-              >
-                <FaTrash />
-              </button>
+              <div className="flex items-center gap-4 w-full md:w-auto">
+                <div className="flex items-center border rounded overflow-hidden shadow-sm">
+                  <button
+                    onClick={() =>
+                      item.quantity > 1 &&
+                      handleQuantityChange(item, item.quantity - 1)
+                    }
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-lg text-gray-700 disabled:opacity-50"
+                    disabled={item.quantity <= 1}
+                  >
+                    <FaMinus />
+                  </button>
+                  <span className="px-4 py-2 text-lg font-medium bg-white">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() =>
+                      item.quantity < (item.product?.stock || 0) &&
+                      handleQuantityChange(item, item.quantity + 1)
+                    }
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-lg text-gray-700 disabled:opacity-50"
+                    disabled={item.quantity >= (item.product?.stock || 0)}
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    if (item?.product?._id) {
+                      handleRemove(item.product._id, item.size);
+                    }
+                  }}
+                  className="text-red-600 hover:text-red-800"
+                  title="Remove"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       <div className="mt-10 flex justify-between items-center border-t pt-6">

@@ -1,57 +1,131 @@
-import React from "react";
-import { FaUserEdit } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import {
+  FaUserEdit,
+  FaUserCircle,
+  FaEnvelope,
+  FaPhone,
+  FaUserShield,
+  FaCalendarAlt,
+  FaIdBadge,
+} from "react-icons/fa";
+import api from "../../utils/axiosConfig";
 
 const Profile = () => {
-  const user = {
-    name: "Mohd Shuaib Anwar",
-    email: "shuaib@example.com",
-    phone: "+91 9876543210",
-    gender: "Male",
-    joined: "January 2024",
-  };
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/users/profile");
+        if (res.data.success) {
+          setUser(res.data.user);
+        } else {
+          console.error(res.data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-red-500">Failed to load profile.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 max-w-3xl mx-auto mt-10">
-      <div className="flex flex-col md:flex-row items-center gap-6">
-        {/* Profile Picture */}
-        <div className="w-32 h-32 rounded-full overflow-hidden shadow-lg border-4 border-gray-200">
-          <img
-            src="https://i.pravatar.cc/300"
-            alt="User"
-            className="w-full h-full object-cover"
-          />
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-lg p-8 max-w-4xl mx-auto mt-10">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <FaUserCircle className="text-gray-400 text-7xl" />
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800">
+              {user.name || "User Profile"}
+            </h2>
+            <p className="text-gray-600 flex items-center gap-2">
+              <FaIdBadge /> ID: {user._id || "N/A"}
+            </p>
+          </div>
         </div>
 
-        {/* User Info */}
-        <div className="flex-1 w-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-gray-800">Profile</h2>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-black to-gray-700 text-white px-4 py-2 rounded-md shadow hover:opacity-90 transition">
-              <FaUserEdit />
-              Edit
-            </button>
-          </div>
+        <button className="mt-4 md:mt-0 flex items-center gap-2 bg-gradient-to-r from-black to-gray-700 text-white px-5 py-2 rounded-xl shadow hover:scale-105 transition-transform">
+          <FaUserEdit />
+          Edit Profile
+        </button>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+      {/* User Details */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Full Name */}
+        <div className="bg-white rounded-xl p-5 shadow hover:shadow-md transition">
+          <div className="flex items-center gap-3 text-gray-700">
+            <FaUserCircle className="text-gray-500 text-xl" />
             <div>
-              <p className="font-medium text-sm text-gray-500">Full Name</p>
-              <p>{user.name}</p>
+              <p className="font-semibold">Full Name</p>
+              <p className="text-gray-600 mt-1">{user.name}</p>
             </div>
+          </div>
+        </div>
+
+        {/* Email */}
+        <div className="bg-white rounded-xl p-5 shadow hover:shadow-md transition">
+          <div className="flex items-center gap-3 text-gray-700">
+            <FaEnvelope className="text-blue-500 text-xl" />
             <div>
-              <p className="font-medium text-sm text-gray-500">Email</p>
-              <p>{user.email}</p>
+              <p className="font-semibold">Email</p>
+              <p className="text-gray-600 mt-1">{user.email}</p>
             </div>
+          </div>
+        </div>
+
+        {/* Phone */}
+        <div className="bg-white rounded-xl p-5 shadow hover:shadow-md transition">
+          <div className="flex items-center gap-3 text-gray-700">
+            <FaPhone className="text-green-500 text-xl" />
             <div>
-              <p className="font-medium text-sm text-gray-500">Phone</p>
-              <p>{user.phone}</p>
+              <p className="font-semibold">Phone</p>
+              <p className="text-gray-600 mt-1">{user.phone || "Not added"}</p>
             </div>
+          </div>
+        </div>
+
+        {/* Role */}
+        <div className="bg-white rounded-xl p-5 shadow hover:shadow-md transition">
+          <div className="flex items-center gap-3 text-gray-700">
+            <FaUserShield className="text-purple-500 text-xl" />
             <div>
-              <p className="font-medium text-sm text-gray-500">Gender</p>
-              <p>{user.gender}</p>
+              <p className="font-semibold">Role</p>
+              <p className="text-gray-600 mt-1 capitalize">{user.role}</p>
             </div>
+          </div>
+        </div>
+
+        {/* Member Since */}
+        <div className="bg-white rounded-xl p-5 shadow hover:shadow-md transition sm:col-span-2">
+          <div className="flex items-center gap-3 text-gray-700">
+            <FaCalendarAlt className="text-red-500 text-xl" />
             <div>
-              <p className="font-medium text-sm text-gray-500">Member Since</p>
-              <p>{user.joined}</p>
+              <p className="font-semibold">Member Since</p>
+              <p className="text-gray-600 mt-1">
+                {new Date(user.createdAt).toLocaleDateString()}
+              </p>
             </div>
           </div>
         </div>

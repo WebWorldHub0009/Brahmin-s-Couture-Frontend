@@ -17,19 +17,17 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("user"));
-      const token = userInfo?.token;
 
-      if (!token) {
+      // ✅ Get logged-in user from localStorage
+      const userInfo = JSON.parse(localStorage.getItem("user"));
+
+      if (!userInfo || !userInfo._id) {
         toast.error("You must be logged in to view orders.");
         return;
       }
 
-      const { data } = await api.get("/orders/my", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // ✅ Fetch orders for that userId
+      const { data } = await api.get(`/orders/${userInfo._id}`);
 
       setOrders(data);
     } catch (err) {
@@ -57,11 +55,21 @@ const Orders = () => {
           <table className="min-w-full divide-y divide-gray-200 text-sm">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left font-medium text-gray-600">Order ID</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-600">Date</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-600">Total</th>
-                <th className="px-6 py-3 text-left font-medium text-gray-600">Status</th>
-                <th className="px-6 py-3 text-center font-medium text-gray-600">Action</th>
+                <th className="px-6 py-3 text-left font-medium text-gray-600">
+                  Order ID
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-600">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-600">
+                  Total
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-600">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-center font-medium text-gray-600">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -72,9 +80,13 @@ const Orders = () => {
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
-                  <td className="px-6 py-4 text-gray-700 font-medium">{order._id}</td>
+                  <td className="px-6 py-4 text-gray-700 font-medium">
+                    {order._id}
+                  </td>
                   <td className="px-6 py-4 text-gray-600">
-                    {new Date(order.orderedAt).toLocaleDateString()}
+                    {order.orderedAt
+                      ? new Date(order.orderedAt).toLocaleDateString()
+                      : "N/A"}
                   </td>
                   <td className="px-6 py-4 text-gray-800 font-semibold">
                     ₹{order.totalAmount}
@@ -82,7 +94,8 @@ const Orders = () => {
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        statusColors[order.status] || "bg-gray-200 text-gray-800"
+                        statusColors[order.status] ||
+                        "bg-gray-200 text-gray-800"
                       }`}
                     >
                       {order.status}

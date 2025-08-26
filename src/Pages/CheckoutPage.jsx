@@ -24,6 +24,7 @@ const CheckoutPage = () => {
   const [billing, setBilling] = useState({
     fullName: "",
     email: "",
+    phone: "",
     address: "",
     city: "",
     pincode: "",
@@ -102,37 +103,56 @@ const CheckoutPage = () => {
     setBilling((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    // Step 1: Create order from backend
-    const { data: order } = await api.post("/payments/create-order", {
-      amount: total, // total in INR
-    });
+    // Step 1: Create Razorpay order via backend
+    const { data: razorOrder } = await api.post("/payments/create-order", {
+  amount: total,
+});
 
-    // Step 2: Razorpay checkout options
     const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_R9UEw8MxeLevbG", // ✅ frontend key only
-      amount: order.amount,
-      currency: order.currency,
-      name: "Brahmani Couture",
-      description: "Order Payment",
-      order_id: order.id,
-      prefill: {
-        name: billing.fullName,
-        email: billing.email,
-        contact: "9999999999", // you can take from user profile/checkout
-      },
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+  amount: razorOrder.order.amount,     // ✅ access inside "order"
+  currency: razorOrder.order.currency, // ✅
+  name: "Brahmani Couture",
+  description: "Order Payment",
+  order_id: razorOrder.order.id,       // ✅
+  prefill: {
+    name: billing.fullName,
+    email: billing.email,
+    contact: billing.phone || "0000000000",
+  },
       handler: async function (response) {
-        // Step 3: verify payment on backend
-        const verifyRes = await api.post("/payment/verify-payment", response);
+        try {
+          // Step 2: Verify payment on backend
+          const verifyRes = await api.post("/payments/verify-payment", {
+            ...response,
+            cart,
+            billing,
+            totalAmount: total,
+          });
 
-        if (verifyRes.data.success) {
-          alert("✅ Payment successful!");
-          navigate("/order-confirmation");
-        } else {
-          alert("❌ Payment verification failed!");
+          if (verifyRes.data.success) {
+            // ✅ Save order dynamically in DB
+            await api.post("/orders", {
+              cart,
+              billing,
+              payment: response,
+              totalAmount: total,
+            });
+
+            navigate("/payment-success", {
+              state: { order: verifyRes.data.order, payment: response },
+            });
+          } else {
+            alert("❌ Payment verification failed!");
+          }
+        } catch (err) {
+          console.error("Error saving order:", err);
+          alert("Failed to complete order. Contact support.");
         }
       },
       theme: { color: "#B02E0C" },
@@ -145,7 +165,6 @@ const CheckoutPage = () => {
     alert("Something went wrong with payment!");
   }
 };
-
 
   if (loading)
     return (
@@ -230,6 +249,20 @@ const CheckoutPage = () => {
                 onChange={handleInput}
               />
             </div>
+
+            {/* Phone input */}
+<div className="flex items-center gap-3">
+  <FaUser className="text-gray-500" />
+  <input
+    type="tel"
+    name="phone"
+    className="w-full border px-4 py-2 rounded-md"
+    placeholder="Phone Number"
+    required
+    value={billing.phone}
+    onChange={handleInput}
+  />
+</div>
 
             <div className="flex items-start gap-3">
               <FaMapMarkedAlt className="mt-2 text-gray-500" />

@@ -128,7 +128,7 @@ const handleSubmit = async (e) => {
       handler: async function (response) {
         try {
           // Step 2: Verify payment on backend
-          const verifyRes = await api.post("/payments/verify-payment", {
+          const verifyRes = await api.post("/payments/verify", {
             ...response,
             cart,
             billing,

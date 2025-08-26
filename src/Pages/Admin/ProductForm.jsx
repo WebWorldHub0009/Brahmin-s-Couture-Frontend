@@ -4,7 +4,7 @@ import api from "../../utils/axiosConfig";
 import {
   FaSpinner,
   FaCloudUploadAlt,
-  FaTag,              // ✅ used instead of FaRegTag
+  FaTag,
   FaRupeeSign,
   FaWarehouse,
   FaListAlt,
@@ -15,7 +15,6 @@ import {
   FaImage,
   FaRegStar,
 } from "react-icons/fa";
-
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -33,7 +32,7 @@ const ProductForm = () => {
     tags: "",
   });
 
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); // ✅ will hold { public_id, url }
   const [previewURLs, setPreviewURLs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -53,6 +52,8 @@ const ProductForm = () => {
           sizes: (product.sizes || []).join(", "),
           tags: (product.tags || []).join(", "),
         });
+        setImages(product.images || []); // load existing images
+        setPreviewURLs((product.images || []).map((img) => img.url));
       } else {
         setMessage(data.message || "Unable to fetch product.");
       }
@@ -71,11 +72,47 @@ const ProductForm = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
+  // ✅ Upload to Cloudinary directly
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
-    setImages(files);
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreviewURLs(urls);
+    setLoading(true);
+    setMessage("Uploading images...");
+
+    const uploadedImages = [];
+    const previewLinks = [];
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET); // set in .env
+      formData.append("folder", "brahmani-couture");
+
+      try {
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const data = await res.json();
+        if (data.secure_url) {
+          uploadedImages.push({
+            public_id: data.public_id,
+            url: data.secure_url,
+          });
+          previewLinks.push(data.secure_url);
+        }
+      } catch (err) {
+        console.error("❌ Cloudinary upload failed:", err);
+        setMessage("Image upload failed.");
+      }
+    }
+
+    setImages((prev) => [...prev, ...uploadedImages]);
+    setPreviewURLs((prev) => [...prev, ...previewLinks]);
+    setLoading(false);
+    setMessage("");
   };
 
   const handleSubmit = async (e) => {
@@ -86,20 +123,16 @@ const ProductForm = () => {
       return setMessage("Please fill all required fields.");
     }
 
-    const formData = new FormData();
-
-    Object.entries(form).forEach(([key, value]) => {
-      if (["sizes", "tags"].includes(key)) {
-        value
-          .split(",")
-          .map((v) => v.trim())
-          .forEach((v) => formData.append(key, v));
-      } else {
-        formData.append(key, value);
-      }
-    });
-
-    images.forEach((img) => formData.append("images", img));
+    const payload = {
+      ...form,
+      sizes: form.sizes
+        ? form.sizes.split(",").map((s) => s.trim())
+        : [],
+      tags: form.tags
+        ? form.tags.split(",").map((t) => t.trim())
+        : [],
+      images,
+    };
 
     try {
       setLoading(true);
@@ -107,7 +140,6 @@ const ProductForm = () => {
 
       const config = {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       };
@@ -116,7 +148,7 @@ const ProductForm = () => {
         ? `/products/update/${id}`
         : "/products/create";
 
-      const res = await api[isEditMode ? "put" : "post"](url, formData, config);
+      const res = await api[isEditMode ? "put" : "post"](url, payload, config);
 
       setMessage(res.data.message || "Success");
 
@@ -152,8 +184,7 @@ const ProductForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block font-medium mb-1 flex items-center gap-2">
-              <FaTag />
- Product Name *
+              <FaTag /> Product Name *
             </label>
             <input
               name="name"

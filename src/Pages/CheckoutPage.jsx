@@ -103,10 +103,49 @@ const CheckoutPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    alert("✅ Payment processed! Order placed successfully.");
-    navigate("/order-confirmation");
-  };
+  e.preventDefault();
+
+  try {
+    // Step 1: Create order from backend
+    const { data: order } = await api.post("/payments/create-order", {
+      amount: total, // total in INR
+    });
+
+    // Step 2: Razorpay checkout options
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_R9UEw8MxeLevbG", // ✅ frontend key only
+      amount: order.amount,
+      currency: order.currency,
+      name: "Brahmani Couture",
+      description: "Order Payment",
+      order_id: order.id,
+      prefill: {
+        name: billing.fullName,
+        email: billing.email,
+        contact: "9999999999", // you can take from user profile/checkout
+      },
+      handler: async function (response) {
+        // Step 3: verify payment on backend
+        const verifyRes = await api.post("/payment/verify-payment", response);
+
+        if (verifyRes.data.success) {
+          alert("✅ Payment successful!");
+          navigate("/order-confirmation");
+        } else {
+          alert("❌ Payment verification failed!");
+        }
+      },
+      theme: { color: "#B02E0C" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.error("Payment error:", error);
+    alert("Something went wrong with payment!");
+  }
+};
+
 
   if (loading)
     return (
